@@ -1,0 +1,11 @@
+# Block access to hidden files and directories
+RewriteEngine On
+RewriteCond % {SCRIPT_FILENAME} -d [OR]
+RewriteCond % {SCRIPT_FILENAME} -f
+RewriteRule "(^|/)\." - [F]
+
+# Specifically block the .git folder just in case
+<DirectoryMatch "^/.*/\.git/">
+    Order deny,allow
+    Deny from all
+</DirectoryMatch>

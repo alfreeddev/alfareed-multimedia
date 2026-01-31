@@ -24,3 +24,11 @@ jobs:
         port: 21
         # Adding timeout and passive mode fix
         timeout: 60000
+
+        exclude: |
+          **/.git*
+          **/.github*
+          **/node_modules/**
+          **/alfreed-v2.zip
+          **/*.zip
+          **/*.rar

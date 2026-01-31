@@ -1,4 +1,4 @@
-name: Deploy to cPanel
+name: 🚀 Al Fareed Auto-Deploy
 
 on:
   push:
@@ -6,29 +6,43 @@ on:
       - main
 
 jobs:
-  web-deploy:
-    name: 🎉 Deploy
+  build-and-deploy:
+    name: 🏗️ Build & 🚚 Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: 🚚 Get latest code
-      uses: actions/checkout@v4
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
 
-    - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: /public_html/
-        protocol: ftp
-        port: 21
-        # Adding timeout and passive mode fix
-        timeout: 60000
+      - name: 🛠️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-        exclude: |
-          **/.git*
-          **/.github*
-          **/node_modules/**
-          **/alfreed-v2.zip
-          **/*.zip
-          **/*.rar
+      - name: 📦 Install & Build
+        run: |
+          npm install
+          npm run build
+        # This fixes the 404 error by creating the .next folder
+
+      - name: 🔄 Create Restart Trigger
+        run: |
+          mkdir -p tmp
+          touch tmp/restart.txt
+        # This tells cPanel to refresh the app automatically
+
+      - name: 📂 Sync to cPanel
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: /public_html/
+          protocol: ftp
+          port: 21
+          timeout: 90000
+          exclude: |
+            **/.git*
+            **/.github*
+            **/node_modules/**
+            **/*.zip
+            **/*.rar

@@ -19,8 +19,8 @@ jobs:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: /public_html/ # CHANGE THIS if your site is in a subfolder
-        exclude: |
-          **/.git*
-          **/.github*
-          **/node_modules/**
+        server-dir: /public_html/
+        protocol: ftp
+        port: 21
+        # Adding timeout and passive mode fix
+        timeout: 60000
